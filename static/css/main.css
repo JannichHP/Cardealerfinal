@@ -1,4 +1,4 @@
-#login-form {
+.login-form {
     margin-top: 25px;
 }
 
@@ -6,6 +6,10 @@
     max-width: 480px;
 }
 
-#form-group {
+.form-group {
     max-width: 120px;
+}
+
+.content-section {
+    max-width: 100px;
 }

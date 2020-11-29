@@ -1,50 +1,45 @@
-from flask import Flask, render_template
+from datetime import datetime
+from flask import Flask, render_template, url_for, flash, redirect
+from forms import RegistrationForm, LoginForm
 from flask_sqlalchemy import SQLAlchemy
 
-app = Flask (__name__)
-app.config ['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///Dyrox.mysql.pythonanywhere-services.com'
-app.config['SECRET_KEY'] = "random string"
-
-
+app = Flask(__name__)
+app.config['SECRET_KEY'] = '2b3b0653a9d3c42948bd5edce8fd84cb'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-class usersignin(db.Model):
-   id = db.Column('user_id', db.Integer, primary_key = True)
-   Navn = db.Column(db.String(50))
-   Efternavn = db.Column(db.String(50))  
-   CVR = db.Column(db.String(8))
-   Email = db.Column(db.String(100))
-   Telefon = db.Column(db.String(8))
-   Adgangskode = db.Column(db.String(100))
-
-def __init__(self, Navn, Efternavn, CVR, Email, Telefon, Adgangskode):
-   self.Navn = Navn
-   self.Efternavn = Efternavn
-   self.CVR = CVR
-   self.Email = Email
-   self.Telefon = Telefon
-   self.Adgangskode = Adgangskode
-
-#usersignin.query.filter_by( = ’Toyota’).all()
+from models import User, Post
 
 @app.route("/")
 def home():
-    return render_template("land_page.html")
-
-
-@app.route("/signin")
-def register_page():
-    return render_template("signin.html")
-
-
-@app.route("/login")
-def login_page():
-    return render_template("login.html")
-
-
-@app.route("/home")
-def home_page():
     return render_template("home.html")
+
+
+@app.route("/register", methods=['GET', 'POST'])
+def register_page():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        flash(f'Account created for {form.Name.data}!', 'success')
+        return redirect(url_for('home'))
+    return render_template("register.html", title='Register', form=form)
+
+
+@app.route("/login", methods=['GET', 'POST'])
+def login_page():
+    form = LoginForm()
+    if form.validate_on_submit():
+        if form.CVR.data == '20202020' and form.password.data == 'password':
+            flash('You have been logged in!', 'success')
+            return redirect(url_for('profile'))
+        else:
+            flash('Login Unsuccessful. Please Check username and password', 'danger')
+    return render_template("login.html", title='Login', form=form)
+
+
+@app.route("/land_page")
+def land_page():
+    return render_template("land_page.html")
 
 
 @app.route("/profile")
@@ -52,6 +47,5 @@ def profile():
     return render_template("profile.html")
 
 if __name__ == "__main__":
-    db.create_all()
     app.run(debug=True)
 

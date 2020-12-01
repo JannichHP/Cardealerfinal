@@ -2,7 +2,7 @@ from flask import render_template, url_for, flash, redirect
 from cardealer import app, db, bcrypt
 from cardealer.forms import RegistrationForm, LoginForm
 from cardealer.models import User, Post
-from flask_login import login_user, current_user, logout_user
+from flask_login import login_user, current_user, logout_user, login_required
 
 
 
@@ -46,14 +46,21 @@ def logout():
     return redirect(url_for('home'))
 
 @app.route("/land_page")
+@login_required
 def land_page():
     return render_template("land_page.html")
 
 
 @app.route("/profile")
+@login_required
 def profile():
-    return render_template("profile.html")
+    return render_template("profile.html", title='profile')
 
 @app.route("/list")
+@login_required
 def list():
     return render_template("list.html")
+
+@app.route("/account")
+def account():
+    return render_template('account.html', title='account')

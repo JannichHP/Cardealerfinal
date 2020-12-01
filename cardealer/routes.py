@@ -1,4 +1,4 @@
-from flask import render_template, url_for, flash, redirect
+from flask import render_template, url_for, flash, redirect, request
 from cardealer import app, db, bcrypt
 from cardealer.forms import RegistrationForm, LoginForm
 from cardealer.models import User, Post
@@ -33,8 +33,9 @@ def login_page():
         user = User.query.filter_by(cvr=form.CVR.data).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
+            next_page = request.args.get('next')
             flash('Login Successful!', 'success')
-            return redirect(url_for('land_page'))
+            return redirect(next_page) if next_page else redirect(url_for('land_page'))
         else:
             flash('Login Unsuccessful. Please Check username and password', 'danger')
     return render_template("login.html", title='Login', form=form)

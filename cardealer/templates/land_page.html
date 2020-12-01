@@ -1,5 +1,10 @@
 {% extends "layout.html" %}
 {% block content %}
+<nav class="nav nav-pills nav-justified">
+  <a class="nav-item nav-link" href="{{ url_for('list') }}">Listings</a>
+  <a class="nav-item nav-link active" href="#">Search</a>
+  <a class="nav-item nav-link" href="{{ url_for('profile') }}">Profile</a>
+</nav>
 <br><br><br><br><br>
 <h1 class="text-center">Car app</h1>
 <div class="container page-form">
@@ -10,6 +15,7 @@
     <div class="text-center">
     <button type="submit" class="btn btn-info">Go</button>
     </div>
+    
 </form>
 </div>
 

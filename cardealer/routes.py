@@ -1,29 +1,24 @@
-from datetime import datetime
-from flask import Flask, render_template, url_for, flash, redirect
-from forms import RegistrationForm, LoginForm
-from flask_sqlalchemy import SQLAlchemy
+from flask import render_template, url_for, flash, redirect
+from cardealer import app, db, bcrypt
+from cardealer.forms import RegistrationForm, LoginForm
+from cardealer.models import User, Post
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = '2b3b0653a9d3c42948bd5edce8fd84cb'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
-
-from models import User, Post
 
 @app.route("/")
 def home():
     return render_template("home.html")
 
-
 @app.route("/register", methods=['GET', 'POST'])
 def register_page():
     form = RegistrationForm()
     if form.validate_on_submit():
-        flash(f'Account created for {form.Name.data}!', 'success')
-        return redirect(url_for('home'))
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user = User(username=form.Name.data, company=form.Company.data, phone=form.Phone.data, cvr=form.CVR.data, email=form.email.data, password=hashed_password)
+        db.session.add(user)
+        db.session.commit()
+        flash('Your account has been created! You are now able to log in', 'success')
+        return redirect(url_for('login_page'))
     return render_template("register.html", title='Register', form=form)
-
 
 @app.route("/login", methods=['GET', 'POST'])
 def login_page():
@@ -45,7 +40,3 @@ def land_page():
 @app.route("/profile")
 def profile():
     return render_template("profile.html")
-
-if __name__ == "__main__":
-    app.run(debug=True)
-

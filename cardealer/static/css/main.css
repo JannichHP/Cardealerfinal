@@ -7,10 +7,14 @@
 }
 
 .form-group {
-    max-width: 120px;
+    max-width: 400px;
 }
 
 .content-section {
     max-width: 100px;
 }
 
+.test1 {
+    max-width: 300px;
+    max-height: 300px;
+}
